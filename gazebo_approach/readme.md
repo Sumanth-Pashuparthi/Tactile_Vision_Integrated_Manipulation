@@ -1,6 +1,6 @@
-# RBE 595
+
 # Tactile-Vision Integrated Robotic Systems for Safe Manipulation of Fragile ObjectsCooper 
-# Authors:Ducharme, Farhan Seliya, Sumanth Pashuparthi
+
 
 Download this Zip File and extract the folders
 cd tactile_vision
