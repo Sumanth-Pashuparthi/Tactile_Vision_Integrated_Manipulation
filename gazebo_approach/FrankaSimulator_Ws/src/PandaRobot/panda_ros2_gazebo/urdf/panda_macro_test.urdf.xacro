@@ -1,0 +1,169 @@
+<?xml version="1.0"?>
+<robot name="ft_sensor_test" xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <!-- Base Link -->
+    <link name="world"/>
+    
+    <!-- Cover plate -->
+    <link name="cover_plate">
+        <inertial>
+            <mass value="0.1"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="0.0001" ixy="0.0" ixz="0.0"
+                     iyy="0.0001" iyz="0.0"
+                     izz="0.0001"/>
+        </inertial>
+        <visual>
+            <geometry>
+                <box size="0.085 0.085 0.001"/>
+            </geometry>
+            <material name="gray">
+                <color rgba="0.3 0.3 0.3 1"/>
+            </material>
+        </visual>
+        <collision>
+            <geometry>
+                <box size="0.085 0.085 0.001"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="coke_can">
+        <inertial>
+            <mass value="1.390"/>  <!-- Mass of a full 12oz can -->
+            <origin xyz="0 0 0.0615" rpy="0 0 0"/>
+            <inertia ixx="0.00025" ixy="0.0" ixz="0.0"
+                     iyy="0.00025" iyz="0.0"
+                     izz="0.00001"/>
+        </inertial>
+        <visual>
+            <geometry>
+                <cylinder radius="0.0333" length="0.123"/>  <!-- Standard can dimensions -->
+            </geometry>
+            <material name="red">
+                <color rgba="0.8 0.2 0.2 1"/>
+            </material>
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder radius="0.0333" length="0.123"/>
+            </geometry>
+        </collision>
+    </link>
+    <!-- Fixed joint to world -->
+    <joint name="world_joint" type="fixed">
+        <parent link="world"/>
+        <child link="cover_plate"/>
+        <origin xyz="0 0 0.1" rpy="0 0 0"/>
+    </joint>
+
+    <!-- Sensor Link 1 -->
+    <link name="sensor_link_01">
+        <inertial>
+            <mass value="0.1"/>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <inertia ixx="0.0001" ixy="0.0" ixz="0.0"
+                     iyy="0.0001" iyz="0.0"
+                     izz="0.0001"/>
+        </inertial>
+        <visual>
+            <geometry>
+                <box size="0.019 0.019 0.005"/>
+            </geometry>
+            <material name="blue">
+                <color rgba="0.2 0.2 0.8 0.9"/>
+            </material>
+        </visual>
+        <collision>
+            <geometry>
+                <box size="0.019 0.019 0.005"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- Sensor Link 2 -->
+    <link name="sensor_link_02">
+        <inertial>
+            <mass value="0.1"/>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <inertia ixx="0.0001" ixy="0.0" ixz="0.0"
+                     iyy="0.0001" iyz="0.0"
+                     izz="0.0001"/>
+        </inertial>
+        <visual>
+            <geometry>
+                <box size="0.019 0.019 0.005"/>
+            </geometry>
+            <material name="red">
+                <color rgba="0.8 0.2 0.2 0.9"/>
+            </material>
+        </visual>
+        <collision>
+            <geometry>
+                <box size="0.019 0.019 0.005"/>
+            </geometry> 
+        </collision>
+    </link>
+    <joint name="can_joint" type="fixed">
+        <parent link="cover_plate"/>
+        <child link="coke_can"/>
+        <origin xyz="0 0 0.0625" rpy="0 0 0"/>  <!-- Positioned at center of plate -->
+    </joint>
+    <!-- Sensor Joint 1 -->
+    <joint name="sensor_joint_01" type="fixed">
+        <parent link="cover_plate"/>
+        <child link="sensor_link_01"/>
+        <origin xyz="-0.02 0 0.0025" rpy="0 0 0"/>
+    </joint>
+
+    <!-- Sensor Joint 2 -->
+    <joint name="sensor_joint_02" type="fixed">
+        <parent link="cover_plate"/>
+        <child link="sensor_link_02"/>
+        <origin xyz="0.02 0 0.0025" rpy="0 0 0"/>
+    </joint>
+
+    <!-- Gazebo-specific elements -->
+    <gazebo reference="cover_plate">
+        <material>Gazebo/Gray</material>
+    </gazebo>
+
+    <gazebo reference="sensor_link_01">
+        <material>Gazebo/Blue</material>
+    </gazebo>
+
+    <gazebo reference="sensor_link_02">
+        <material>Gazebo/Red</material>
+    </gazebo>
+
+    <!-- Force-Torque Sensor 1 Plugin -->
+ <!-- Force-Torque Sensor 1 Plugin -->
+<!-- Force-Torque Sensor 1 Plugin -->
+<!-- Force-Torque Sensor 1 Plugin -->
+    <gazebo>
+        <plugin name="ft_sensor_01" filename="libgazebo_ros_ft_sensor.so">
+            <ros>
+                <namespace>/gazebo/default</namespace>
+                <remapping>wrench:=panda/sensor_01/wrench</remapping>
+            </ros>
+            <joint_name>sensor_joint_01</joint_name>
+            <body_name>cover_plate</body_name>
+            <frame_name>sensor_link_01</frame_name>
+            <gaussian_noise>0.01</gaussian_noise>
+            <update_rate>50</update_rate>
+        </plugin>
+    </gazebo>
+
+    <!-- Force-Torque Sensor 2 Plugin -->
+    <gazebo>
+        <plugin name="ft_sensor_02" filename="libgazebo_ros_ft_sensor.so">
+            <ros>
+                <namespace>/gazebo/default</namespace>
+                <remapping>wrench:=panda/sensor_02/wrench</remapping>
+            </ros>
+            <joint_name>sensor_joint_02</joint_name>
+            <body_name>cover_plate</body_name>
+            <frame_name>sensor_link_02</frame_name>
+            <gaussian_noise>0.01</gaussian_noise>
+            <update_rate>50</update_rate>
+        </plugin>
+    </gazebo>
+</robot>
